@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 
 export default function Expenseform({setExpenses}) {
@@ -14,19 +14,34 @@ export default function Expenseform({setExpenses}) {
     amount: "",
   });
 
+  const titleRef = useRef(null);
+  const categoryRef = useRef(null);
+  const amountRef = useRef(null);
+
+
   const handleSubmit = (e) => {
     e.preventDefault();
+   
+    // B y using UseRef hook
+    setExpenses((prevState)=> [
+      ...prevState,{
+        title:titleRef.current.value,
+        category: categoryRef.current.value,
+        amount:amountRef.current.value,
+        id: crypto.randomUUID()
+      }
+    ])
 
-    setExpenses((prevState) => [
-      ...prevState,
-       {...expense, id: crypto.randomUUID()}
-      ])
+    // setExpenses((prevState) => [
+    //   ...prevState,
+    //    {...expense, id: crypto.randomUUID()}
+    //   ])
 
-    setExpense({
-      title: "",
-      category: "",
-      amount: "",
-    });  
+    // setExpense({
+    //   title: "",
+    //   category: "",
+    //   amount: "",
+    // });  
       
 
     //Using unidirectional data flow with 3 separate state
@@ -66,6 +81,7 @@ export default function Expenseform({setExpenses}) {
           name="title"
           value={expense.title}
           onChange={(e) => setExpense((prevState) => ({...prevState, title: e.target.value}))}
+          ref={titleRef}
         />
       </div>
 
@@ -77,6 +93,7 @@ export default function Expenseform({setExpenses}) {
           name="category"
           value={expense.category}
           onChange={(e) => setExpense((prevState)=> ({...prevState,  category: e.target.value}))}
+          ref={categoryRef}
         >
           <option hidden>Select Category</option>
           <option value="Grocery">Grocery</option>
@@ -93,6 +110,7 @@ export default function Expenseform({setExpenses}) {
           name="amount"
           value={expense.amount}
           onChange={(e) => setExpense((prevState)=> ({...prevState, amount: e.target.value}))}
+          ref={amountRef}
         />
       </div>
       <button className="add-btn">Add</button>
