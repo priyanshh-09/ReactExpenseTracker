@@ -14,6 +14,28 @@ export default function Expenseform({setExpenses}) {
     amount: "",
   });
 
+  const[errors,setErrors] = useState({});
+
+
+  const validate = (formData)=>{
+     const errorsData = {};
+
+      if(!formData.title){
+        errorsData.title = 'Title is required';
+      }
+
+      if(!formData.category) {
+        errorsData.category = "Category is required";
+      }
+
+      if(!formData.amount) {
+        errorsData.amount = "Amount is required";
+      }
+
+      setErrors(errorsData);
+      return errorsData;
+  }
+
 
   // By using UseRef hook
   // const titleRef = useRef(null);
@@ -32,6 +54,10 @@ export default function Expenseform({setExpenses}) {
     //     id: crypto.randomUUID()
     //   }
     // ])
+       
+   const validateResult = validate(expense)
+
+    if(Object.keys(validateResult).length) return;
 
     setExpenses((prevState) => [
       ...prevState,
@@ -72,14 +98,13 @@ export default function Expenseform({setExpenses}) {
   // }
   
 
-
-  
   const handleChange = (e)=>{
     const {name,value} = e.target;
    setExpense((prevState) => ({
     ...prevState, 
      [name]: value,
     }))
+    setErrors({})
   }
 
   return (
@@ -91,9 +116,10 @@ export default function Expenseform({setExpenses}) {
           id="title"
           name="title"
           value={expense.title}
-          onChange={ handleChange}
+          onChange={handleChange}
           // ref={titleRef}
         />
+        <p className="error">{errors.title}</p>
       </div>
 
       <div className="input-container">
@@ -103,7 +129,7 @@ export default function Expenseform({setExpenses}) {
           id="category"
           name="category"
           value={expense.category}
-          onChange={ handleChange}
+          onChange={handleChange}
           // ref={categoryRef}
         >
           <option hidden>Select Category</option>
@@ -113,6 +139,7 @@ export default function Expenseform({setExpenses}) {
           <option value="Education">Education</option>
           <option value="Medicine">Medicine</option>
         </select>
+        <p className="error">{errors.category}</p>
       </div>
       <div className="input-container">
         <label htmlfor="amount">Amount</label>
@@ -123,6 +150,7 @@ export default function Expenseform({setExpenses}) {
           onChange={handleChange}
           // ref={amountRef}
         />
+        <p className="error">{errors.amount}</p>
       </div>
       <button className="add-btn">Add</button>
     </form>
