@@ -1,4 +1,6 @@
 import { useState } from "react";
+import Input from "./Input";
+import Select from "./Select";
 
 
 export default function Expenseform({setExpenses}) {
@@ -15,22 +17,33 @@ export default function Expenseform({setExpenses}) {
   });
 
   const[errors,setErrors] = useState({});
-
+  
+  const validationConfig = {
+    title: [
+      { required: true, message: "Please Enter Title" },
+      { minLength: 5, message: "Title should be atleast 5 char long !!" },
+    ],
+    category: [{ required: true, message: "Please Enter Category !!" }],
+    amount: [{ required: true, message: "Please Enter an Amount !!" }],
+  };
 
   const validate = (formData)=>{
      const errorsData = {};
+     
 
-      if(!formData.title){
-        errorsData.title = 'Title is required';
-      }
+     Object.entries(formData).forEach(([key , value])=>{   
+      // console.log(validationConfig[key]);
+         
+        validationConfig[key].forEach((rule)=>{
+              if(rule.required && !value){
+                errorsData[key] = rule.message;
+              }
 
-      if(!formData.category) {
-        errorsData.category = "Category is required";
-      }
-
-      if(!formData.amount) {
-        errorsData.amount = "Amount is required";
-      }
+              if (rule.minLength && value.length < 5) {
+                errorsData[key] = rule.message;
+              }
+        })
+     })
 
       setErrors(errorsData);
       return errorsData;
@@ -109,49 +122,34 @@ export default function Expenseform({setExpenses}) {
 
   return (
     <form className="expense-form" onSubmit={handleSubmit}>
-      <div className="input-container">
-        <label htmlfor="title">Title</label>
+      <Input
+        label="Title"
+        id={"title"}
+        name={"title"}
+        value={expense.title}
+        onchange={handleChange}
+        error={errors.title}
+      />
 
-        <input
-          id="title"
-          name="title"
-          value={expense.title}
-          onChange={handleChange}
-          // ref={titleRef}
-        />
-        <p className="error">{errors.title}</p>
-      </div>
+      <Select
+        label="Category"
+        id={"category"}
+        name={"category"}
+        value={expense.category}
+        onchange={handleChange}
+        error={errors.category}
+        defaultOption='Select Category'
+        options={["Grocery","Clothes","Bills","Education","Medicine"]}
+      />
 
-      <div className="input-container">
-        <label htmlfor="category">Category</label>
-
-        <select
-          id="category"
-          name="category"
-          value={expense.category}
-          onChange={handleChange}
-          // ref={categoryRef}
-        >
-          <option hidden>Select Category</option>
-          <option value="Grocery">Grocery</option>
-          <option value="Clothes">Clothes</option>
-          <option value="Bills">Bills</option>
-          <option value="Education">Education</option>
-          <option value="Medicine">Medicine</option>
-        </select>
-        <p className="error">{errors.category}</p>
-      </div>
-      <div className="input-container">
-        <label htmlfor="amount">Amount</label>
-        <input
-          id="amount"
-          name="amount"
-          value={expense.amount}
-          onChange={handleChange}
-          // ref={amountRef}
-        />
-        <p className="error">{errors.amount}</p>
-      </div>
+      <Input
+        label="Amount"
+        id="amount"
+        name="amount"
+        value={expense.amount}
+        onchange={handleChange}
+        error={errors.amount}
+      />
       <button className="add-btn">Add</button>
     </form>
   );
