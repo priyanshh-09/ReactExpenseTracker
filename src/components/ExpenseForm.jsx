@@ -14,17 +14,23 @@ export default function Expenseform({setExpenses}) {
     title: "",
     category: "",
     amount: "",
+    email:"",
   });
 
   const[errors,setErrors] = useState({});
   
   const validationConfig = {
     title: [
-      { required: true, message: "Please Enter Title" },
+      { required: true, message: "Please Enter a Title !!" },
       { minLength: 5, message: "Title should be atleast 5 char long !!" },
-    ],
-    category: [{ required: true, message: "Please Enter Category !!" }],
+          ],
+    category: [{ required: true, message: "Please Select Category !!" }],
     amount: [{ required: true, message: "Please Enter an Amount !!" }],
+    email: [
+      { required: true, message: "Please Enter an Email !!" },
+      // eslint-disable-next-line no-useless-escape
+      { pattern: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, message:'Please Enter "Valid" email'},
+           ],
   };
 
   const validate = (formData)=>{
@@ -32,15 +38,23 @@ export default function Expenseform({setExpenses}) {
      
 
      Object.entries(formData).forEach(([key , value])=>{   
-      // console.log(validationConfig[key]);
+      // console.log(validationConfig[key]);/
          
-        validationConfig[key].forEach((rule)=>{
+        validationConfig[key].some((rule)=>{
+          
               if(rule.required && !value){
-                errorsData[key] = rule.message;
+                errorsData[key] = rule.message;;
+                return true;
               }
 
               if (rule.minLength && value.length < 5) {
                 errorsData[key] = rule.message;
+                return true;
+              }
+
+              if(rule.pattern && !rule.pattern.test(value)){
+                 errorsData[key] = rule.message;
+                 return true;
               }
         })
      })
@@ -122,6 +136,16 @@ export default function Expenseform({setExpenses}) {
 
   return (
     <form className="expense-form" onSubmit={handleSubmit}>
+    
+      <Input
+        label="Email"
+        id={"email"}
+        name={"email"}
+        value={expense.email}
+        onchange={handleChange}
+        error={errors.email}
+      />
+
       <Input
         label="Title"
         id={"title"}
@@ -138,8 +162,8 @@ export default function Expenseform({setExpenses}) {
         value={expense.category}
         onchange={handleChange}
         error={errors.category}
-        defaultOption='Select Category'
-        options={["Grocery","Clothes","Bills","Education","Medicine"]}
+        defaultOption="Select Category"
+        options={["Grocery", "Clothes", "Bills", "Education", "Medicine"]}
       />
 
       <Input
