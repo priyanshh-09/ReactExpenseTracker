@@ -25,7 +25,9 @@ export default function Expenseform({setExpenses}) {
       { minLength: 5, message: "Title should be atleast 5 char long !!" },
           ],
     category: [{ required: true, message: "Please Select Category !!" }],
-    amount: [{ required: true, message: "Please Enter an Amount !!" }],
+    amount: [{ required: true, message: "Please Enter an Amount !!" },
+      {chars: true, message: 'Amount must be in "Numbers" '}
+    ],
     email: [
       { required: true, message: "Please Enter an Email !!" },
       // eslint-disable-next-line no-useless-escape
@@ -56,6 +58,11 @@ export default function Expenseform({setExpenses}) {
                  errorsData[key] = rule.message;
                  return true;
               }
+
+               if (rule.chars && !/^-?\d+$/.test(value)) {
+                 errorsData[key] = rule.message;
+                 return true;
+               }
         })
      })
 
@@ -136,7 +143,7 @@ export default function Expenseform({setExpenses}) {
 
   return (
     <form className="expense-form" onSubmit={handleSubmit}>
-    
+
       <Input
         label="Email"
         id={"email"}
