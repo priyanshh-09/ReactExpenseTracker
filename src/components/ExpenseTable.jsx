@@ -1,7 +1,16 @@
 
+import { useFilter } from "../Hooks/useFilter";
+
 
 export default function ExpenseTable({expenses}) {
   // console.log(expenses);
+  const [FilteredData, setQuery] =  useFilter(expenses, (data)=> data.category);
+
+  // const FilteredData = expenses.filter((expense)=>{
+  //     return expense.category.toLowerCase().includes(category);
+  // })
+  // console.log(FilteredData);
+  
   
   return (
     <table className="expense-table">
@@ -9,7 +18,7 @@ export default function ExpenseTable({expenses}) {
         <tr>
           <th>Title</th>
           <th>
-            <select>
+            <select onChange={(e)=> setQuery(e.target.value.toLowerCase())}>
               <option value="">All</option>
               <option value="grocery">Grocery</option>
               <option value="clothes">Clothes</option>
@@ -44,7 +53,7 @@ export default function ExpenseTable({expenses}) {
         </tr>
       </thead>
       <tbody>
-        {expenses.map(({ id, title, category, amount})=>{
+        {FilteredData.map(({ id, title, category, amount})=>{
              return <tr key={id}>
                <td>{title}</td>
                <td>{category}</td>
