@@ -3,19 +3,14 @@ import Input from "./Input";
 import Select from "./Select";
 
 
-export default function Expenseform({setExpenses}) {
+export default function Expenseform({setExpenses, setExpense, expense, editingrowid, setEditingRowId}) {
   //Using unidirectional data flow with 3 separate state
   //  const[title, setTitle] = useState('');
   //  const[category, setCategory] = useState('');
   //  const[amount, setAmount] = useState("");
 
   //By Using only single state
-  const [expense, setExpense] = useState({
-    title: "",
-    category: "",
-    amount: "",
-    email:"",
-  });
+ 
 
   const[errors,setErrors] = useState({});
   
@@ -25,20 +20,20 @@ export default function Expenseform({setExpenses}) {
       { minLength: 5, message: "Title should be atleast 5 char long !!" },
           ],
     category: [{ required: true, message: "Please Select Category !!" }],
-    amount: [{ required: true, message: "Please Enter an Amount !!" },
-      {chars: true, message: 'Amount must be in "Numbers" '}
-    ],
+    amount: [
+             { required: true, message: "Please Enter an Amount !!" },
+             {chars: true, message: 'Amount must be in "Numbers" '}
+            ],
     email: [
-      { required: true, message: "Please Enter an Email !!" },
+             { required: true, message: "Please Enter an Email !!" },
       // eslint-disable-next-line no-useless-escape
-      { pattern: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, message:'Please Enter "Valid" email'},
+             { pattern: /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/, message:'Please Enter "Valid" email'},
            ],
   };
 
   const validate = (formData)=>{
      const errorsData = {};
      
-
      Object.entries(formData).forEach(([key , value])=>{   
       // console.log(validationConfig[key]);/
          
@@ -92,6 +87,26 @@ export default function Expenseform({setExpenses}) {
    const validateResult = validate(expense)
 
     if(Object.keys(validateResult).length) return;
+
+    if(editingrowid){
+      setExpenses((prevState) =>
+        prevState.map((exp) => {
+          if(exp.id === editingrowid){
+             return {...expense, id: editingrowid};
+          }
+          return exp;
+        })
+      )
+      
+      setExpense({
+        title: "",
+        category: "",
+        amount: "",
+      });  
+
+      setEditingRowId('');
+        return;
+    }
 
     setExpenses((prevState) => [
       ...prevState,
@@ -181,7 +196,7 @@ export default function Expenseform({setExpenses}) {
         onchange={handleChange}
         error={errors.amount}
       />
-      <button className="add-btn">Add</button>
+      <button className="add-btn">{editingrowid ? 'Save': 'Add'}</button>
     </form>
   );
 }
