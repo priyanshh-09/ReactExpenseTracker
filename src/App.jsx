@@ -1,20 +1,20 @@
 import ExpenseForm from './components/ExpenseForm';
 import ExpenseTable from './components/ExpenseTable';
 import expenseData from './components/expenseData';
-import { useState } from 'react';
 import './App.css'
+import { useLocalStrorage } from './Hooks/useLocalStrorage';
 
 function App() {
 
-  const [expense, setExpense] = useState({
-     title: "",
-     category: "",
-     amount: "",
-     email: "",
+  const [expense, setExpense] = useLocalStrorage("expense", {
+    title: "",
+    category: "",
+    amount: "",
+    email: "",
   });
-  const [expenses, setExpenses] = useState(expenseData);
+  const [expenses, setExpenses] = useLocalStrorage('expenses',expenseData);
   // console.log(expenses);
-  const[editingrowid, setEditingRowId] = useState('');
+  const [editingrowid, setEditingRowId] = useLocalStrorage("editingrowid", "");
 
   return (
       <main>
